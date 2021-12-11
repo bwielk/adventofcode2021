@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public class Row {
@@ -20,5 +19,10 @@ public class Row {
 
 	public boolean isChecked() {
 		return checked;
+	}
+
+	@Override
+	public String toString() {
+		return "\nRow{" + "row=" + row + '}';
 	}
 }

@@ -19,4 +19,9 @@ public class Number {
 	public void setAsMarked(){
 		this.isMarked = true;
 	}
+
+	@Override
+	public String toString() {
+		return "" + value + "";
+	}
 }
