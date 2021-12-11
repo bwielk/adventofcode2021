@@ -47,6 +47,7 @@ public class Table {
 				}
 			}
 		}
+		this.numOfCols = numOfCols;
 	}
 
 	public void addWinningColumns( final Column winningColumn ) {

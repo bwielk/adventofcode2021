@@ -22,44 +22,38 @@ public class GiantSquid {
 		for(int bingoNumberIndex=0; bingoNumberIndex<bingoNumbers.size(); bingoNumberIndex++) {
 			int currentNumberToCheck = bingoNumbers.get( bingoNumberIndex );
 			for ( Table t : bingoTables ) {
-
 				checkTableForNumber( currentNumberToCheck, t );
+			}
+		}
 
-				//				for(Column c : t.getColumns()){
-				//					if(c.getColumn().stream().allMatch( Number::isMarked )) {
-				//						t.addWinningColumns( c );
-				//					}
-				//					if(winningTables.size() == 0){
-				//						winningTables.add( t );
-				//					}else{
-				//						winningTables.forEach( x -> {
-				//							if ( x.getId().equals( t.getId() ) ) {
-				//								//check if there is a table with the existing record
-				//								if(!x.getWinningColumns().equals( c )){
-				//									winningTables.add( t );
-				//								}
-				//							}
-				//						});
-				//					}
-				//				}
-				//				for ( Row r : t.getRows() ){
-				//					if(r.getRow().stream().allMatch( Number::isMarked ) && r.isChecked()) {
-				//						t.addWinningRows( r );
-				//					}
-				//					List<Table> foundTables = winningTables.stream()
-				//							.filter( x -> x.getId().equals( t.getId() ) )
-				//							.collect( Collectors.toList() );
-				//					if(foundTables.isEmpty() && !t.getWinningRows().isEmpty()){
-				//						winningTables.add( t );
-				//					}else {
-				//						if ( !foundTables.isEmpty() ) {
-				//							if(foundTables.get( 0 ).getWinningRows().contains( r )){
-				//								winningTables.add( t );
-				//							}
-				//						}
-				//					}
-				//				}
-				//			}
+		for ( Table t : bingoTables ) {
+			for ( Row r : t.getRows() ) {
+				if ( r.getRow().stream().allMatch( Number::isMarked ) ) {
+					t.addWinningRows( r );
+				}
+				//check if the table has already been added
+				List<Table> foundTables = winningTables.stream()
+						.filter( x -> x.getId().equals( t.getId() ) )
+						.collect( Collectors.toList() );
+				//if no table like the current one has been found
+				// and the current table contains wins, add it to the winning tables
+				if ( foundTables.isEmpty() && !t.getWinningRows().isEmpty() ) {
+					winningTables.add( t );
+				}
+			}
+
+			for(Column c : t.getColumns()){
+				if(c.getColumn().stream().allMatch( Number::isMarked )) {
+					t.addWinningColumns( c );
+				}
+				List<Table> foundTables = winningTables.stream()
+						.filter( x -> x.getId().equals( t.getId() ) )
+						.collect( Collectors.toList() );
+				//if no table like the current one has been found
+				// and the current table contains wins, add it to the winning tables
+				if ( foundTables.isEmpty() && !t.getWinningColumns().isEmpty() ) {
+					winningTables.add( t );
+				}
 			}
 		}
 		System.out.println("Hello");
