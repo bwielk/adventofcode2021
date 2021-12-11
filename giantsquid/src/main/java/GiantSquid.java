@@ -12,11 +12,71 @@ public class GiantSquid {
 
 	private static List<Integer> bingoNumbers;
 	private static List<Table> bingoTables = new ArrayList<>();
+	private static List<Table> winningTables = new ArrayList<>();
 
 	public static void main( String[] args ) {
+
+		bingoNumbers = generateBingoNumbers();
+		generateBingoTables();
+
+		for(int bingoNumberIndex=0; bingoNumberIndex<bingoNumbers.size(); bingoNumberIndex++) {
+			int currentNumberToCheck = bingoNumbers.get( bingoNumberIndex );
+			for ( Table t : bingoTables ) {
+
+				checkTableForNumber( currentNumberToCheck, t );
+
+				//				for(Column c : t.getColumns()){
+				//					if(c.getColumn().stream().allMatch( Number::isMarked )) {
+				//						t.addWinningColumns( c );
+				//					}
+				//					if(winningTables.size() == 0){
+				//						winningTables.add( t );
+				//					}else{
+				//						winningTables.forEach( x -> {
+				//							if ( x.getId().equals( t.getId() ) ) {
+				//								//check if there is a table with the existing record
+				//								if(!x.getWinningColumns().equals( c )){
+				//									winningTables.add( t );
+				//								}
+				//							}
+				//						});
+				//					}
+				//				}
+				//				for ( Row r : t.getRows() ){
+				//					if(r.getRow().stream().allMatch( Number::isMarked ) && r.isChecked()) {
+				//						t.addWinningRows( r );
+				//					}
+				//					List<Table> foundTables = winningTables.stream()
+				//							.filter( x -> x.getId().equals( t.getId() ) )
+				//							.collect( Collectors.toList() );
+				//					if(foundTables.isEmpty() && !t.getWinningRows().isEmpty()){
+				//						winningTables.add( t );
+				//					}else {
+				//						if ( !foundTables.isEmpty() ) {
+				//							if(foundTables.get( 0 ).getWinningRows().contains( r )){
+				//								winningTables.add( t );
+				//							}
+				//						}
+				//					}
+				//				}
+				//			}
+			}
+		}
+		System.out.println("Hello");
+	}
+
+	private static void checkTableForNumber(int numberToCheck, Table table){
+		for( Row row : table.getRows()){
+			row.getRow().stream().forEach( x -> {
+				if ( x.getValue().equals( numberToCheck )) {
+					x.setAsMarked();
+				}
+			});
+		}
+	}
+
+	private static void generateBingoTables(){
 		List<String> lines  = lineReader();
-		bingoNumbers = Arrays.stream( lines.get( 0 ).split( "," ) ).map( Integer::parseInt ).collect(
-				Collectors.toList());
 		Table table = null;
 		for(int i=1; i<lines.size(); i++){
 			if( lines.get( i ).equals( "" ) ){
@@ -32,30 +92,22 @@ public class GiantSquid {
 						.map( Integer::parseInt ).collect( Collectors.toList() );
 				table.addRow( rowOfInts.stream().map( Number::new ).collect( Collectors.toList()) );
 			}
+			if(i==lines.size()-1){
+				bingoTables.add( table );
+			}
 		}
+		System.out.println("");
+	}
 
-		for(int bingoNumberIndex=0; bingoNumberIndex<bingoNumbers.size(); bingoNumberIndex++){
-			for(Table t : bingoTables){
-				for(List<Number> row : t.getRows()){
-					final int finalBingoNumberIndex = bingoNumberIndex;
-					row.stream().forEach( x -> {
-						if ( x.getValue().equals( bingoNumbers.get( finalBingoNumberIndex ) ) ) {
-							x.setAsMarked();
-						}
-					});
-				}
-			}
-			if(bingoNumberIndex > 5){
-				System.out.println("Start checks");
-			}
-		}
-		System.out.println("Hello");
+	private static List<Integer> generateBingoNumbers(){
+		return Arrays.stream( lineReader().get( 0 ).split( "," ) ).map( Integer::parseInt ).collect(
+				Collectors.toList());
 	}
 
 	private static List<String> lineReader(){
 		List<String> lines = new ArrayList<>();
 		ClassLoader classLoader = GiantSquid.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "bingo.txt" );
+		InputStream is = classLoader.getResourceAsStream( "bingom.txt" );
 		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
 				BufferedReader reader = new BufferedReader( streamReader )) {
 			String line;
