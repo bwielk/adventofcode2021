@@ -17,6 +17,6 @@ public class Number {
 	}
 
 	public void setAsMarked(){
-		this.isMarked = false;
+		this.isMarked = true;
 	}
 }

@@ -33,6 +33,22 @@ public class GiantSquid {
 				table.addRow( rowOfInts.stream().map( Number::new ).collect( Collectors.toList()) );
 			}
 		}
+
+		for(int bingoNumberIndex=0; bingoNumberIndex<bingoNumbers.size(); bingoNumberIndex++){
+			for(Table t : bingoTables){
+				for(List<Number> row : t.getRows()){
+					final int finalBingoNumberIndex = bingoNumberIndex;
+					row.stream().forEach( x -> {
+						if ( x.getValue().equals( bingoNumbers.get( finalBingoNumberIndex ) ) ) {
+							x.setAsMarked();
+						}
+					});
+				}
+			}
+			if(bingoNumberIndex > 5){
+				System.out.println("Start checks");
+			}
+		}
 		System.out.println("Hello");
 	}
 
