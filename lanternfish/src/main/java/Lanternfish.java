@@ -11,16 +11,22 @@ import java.util.stream.Collectors;
 public class Lanternfish {
 
 	private static List<Integer> initialState;
-	private static List<ArrayList<Integer>> dayRecords = new ArrayList<>();
+	private static List<Integer> dayRecords = new ArrayList<>();
 	private static List<Integer> newFish = new ArrayList<>();
 
 	public static void main( String[] args ) {
 		readInitialState();
-		for(int i=0; i<80; i++){
-			List<Integer> currentDayRecord = dayRecords.get( i );
+		calculateFish(80);
+		displaySequence();
+		System.out.println("TOTAL FISH AT THE END OF THE PERIOD: " + dayRecords.size());
+		System.out.println("TOTAL SUM OF DAYS: " + dayRecords.stream().reduce( 0, (a,b) -> a + b) );
+	}
+	
+	private static void calculateFish(int target){
+		for(int i=0; i<target; i++){
 			ArrayList<Integer> newDayList = new ArrayList<>();
-			for(int x=0; x<currentDayRecord.size(); x++){
-				int currentIntervalNumber =  currentDayRecord.get( x );
+			for(int x=0; x<dayRecords.size(); x++){
+				int currentIntervalNumber =  dayRecords.get( x );
 				int newIntervalNumber;
 				if(currentIntervalNumber-1<0){
 					newIntervalNumber = 6;
@@ -31,17 +37,17 @@ public class Lanternfish {
 				}
 			}
 			newDayList.addAll( newFish );
-			dayRecords.add( newDayList );
+			dayRecords = newDayList;
 			newFish = new ArrayList<>();
 		}
 		displaySequence();
-		System.out.println("TOTAL FISH AT THE END OF THE PERIOD: " + dayRecords.get( dayRecords.size()-1 ).size());
-		System.out.println("TOTAL SUM: " + dayRecords.get( dayRecords.size()-1 ).stream().reduce( 0, (a,b) -> a + b) );
+		System.out.println("TOTAL FISH AT THE END OF THE PERIOD: " + dayRecords.size());
+		System.out.println("TOTAL SUM OF DAYS: " + dayRecords.stream().reduce( 0, (a,b) -> a + b) );
 	}
 
 	private static void readInitialState(){
 		ClassLoader classLoader = Lanternfish.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "f.txt" );
+		InputStream is = classLoader.getResourceAsStream( "fish.txt" );
 		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
 				BufferedReader reader = new BufferedReader( streamReader )) {
 			String line;
@@ -52,12 +58,10 @@ public class Lanternfish {
 		} catch ( IOException e ) {
 			e.printStackTrace();
 		}
-		dayRecords.add( (ArrayList<Integer>) initialState );
+		dayRecords.addAll( initialState );
 	}
 
 	private static void displaySequence(){
-		for(int i=0; i<dayRecords.size(); i++){
-			System.out.println("\n" + dayRecords.get( i ).toString());
-		}
+			System.out.println("\n" + dayRecords.toString());
 	}
 }
