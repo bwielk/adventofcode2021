@@ -15,4 +15,9 @@ public class EndCoords {
 	public int getY() {
 		return y;
 	}
+
+	@Override
+	public String toString() {
+		return "EndCoords{" + "x=" + x + ", y=" + y + '}';
+	}
 }

@@ -15,4 +15,9 @@ public class StartCoords {
 	public int getY() {
 		return y;
 	}
+
+	@Override
+	public String toString() {
+		return "StartCoords{" + "x=" + x + ", y=" + y + '}';
+	}
 }

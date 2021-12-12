@@ -51,7 +51,7 @@ public class HydrothermalVents {
 	 * Consider only horizontal and vertical lines. At how many points do at least two lines overlap?
 	 */
 
-	private static Object[][] board;
+	private static int[][] board;
 	private static List<Coords> coordinates;
 
 	public static void main( String[] args ) {
@@ -59,6 +59,7 @@ public class HydrothermalVents {
 		crateCoordsFromFile();
 		runAllMoves();
 		printBoard();
+		countOverlapsOfAmount(2);
 	}
 
 	private static void runAllMoves(){
@@ -99,13 +100,25 @@ public class HydrothermalVents {
 
 	private static void printBoard(){
 		for(int r=0; r<board.length; r++){
-			Object[] row = board[r];
+			int[] row = board[r];
 			System.out.println(Arrays.toString(row));
 		}
 	}
 
+	private static void countOverlapsOfAmount(int numberOfOverlaps){
+		int count = 0;
+		for(int r=0; r<board.length; r++){
+			for(int i=0; i<board[r].length; i++){
+				if(board[r][i] >= numberOfOverlaps){
+					count++;
+				}
+			}
+		}
+		System.out.println(String.format("Overlaps of more than %s points on the board occur %s times", numberOfOverlaps, count));
+	}
+
 	private static void createBoard(){
-		board = new Object[5][5];
+		board = new int[1000][1000];
 	}
 
 	private static void crateCoordsFromFile(){
@@ -131,7 +144,7 @@ public class HydrothermalVents {
 	private static List<String> readLines(){
 		List<String> lines = new ArrayList<>();
 		ClassLoader classLoader = HydrothermalVents.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "ventse.txt" );
+		InputStream is = classLoader.getResourceAsStream( "vents.txt" );
 		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
 				BufferedReader reader = new BufferedReader( streamReader )) {
 			String line;

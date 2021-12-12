@@ -15,4 +15,9 @@ public class Coords {
 	public EndCoords getEndCoords() {
 		return endCoords;
 	}
+
+	@Override
+	public String toString() {
+		return "Coords{" + "startCoords=" + startCoords.toString() + ", endCoords=" + endCoords.toString() + '}';
+	}
 }
