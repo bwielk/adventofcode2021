@@ -1,18 +1,18 @@
 public class EndCoords {
 
-	private int start;
-	private int end;
+	private int x;
+	private int y;
 
-	public EndCoords( final int start, final int end ) {
-		this.start = start;
-		this.end = end;
+	public EndCoords( final int x, final int y ) {
+		this.x = x;
+		this.y = y;
 	}
 
-	public int getStart() {
-		return start;
+	public int getX() {
+		return x;
 	}
 
-	public int getEnd() {
-		return end;
+	public int getY() {
+		return y;
 	}
 }

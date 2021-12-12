@@ -57,11 +57,55 @@ public class HydrothermalVents {
 	public static void main( String[] args ) {
 		createBoard();
 		crateCoordsFromFile();
-		System.out.println(coordinates);
+		runAllMoves();
+		printBoard();
+	}
+
+	private static void runAllMoves(){
+		for(Coords coord : coordinates){
+			move(coord);
+		}
+	}
+
+	private static void move(Coords coord){
+		StartCoords startCoords = coord.getStartCoords();
+		EndCoords endCoords = coord.getEndCoords();
+		if((startCoords.getX() == endCoords.getX()) && (startCoords.getY() != endCoords.getY())){
+			int startPoint = Math.min( startCoords.getY(), endCoords.getY() );
+			int endPoint = Math.max( startCoords.getY(), endCoords.getY() );
+			for(int y= startPoint; y<=endPoint; y++){
+				Object currentValue = board[y][coord.getStartCoords().getX()];
+				if(currentValue == null){
+					board[y][coord.getStartCoords().getX()] = 1;
+				}else{
+					board[y][coord.getStartCoords().getX()] = (int) board[y][coord.getStartCoords().getX()]+1;
+				}
+			}
+		}else if((startCoords.getX() != endCoords.getX()) && (startCoords.getY() == endCoords.getY())){
+			int startPoint = Math.min( startCoords.getX(), endCoords.getX() );
+			int endPoint = Math.max( startCoords.getX(), endCoords.getX() );
+			for(int x= startPoint; x<=endPoint; x++){
+				Object currentValue = board[coord.getStartCoords().getY()][x];
+				if(currentValue == null){
+					board[coord.getStartCoords().getY()][x] = 1;
+				}else{
+					board[coord.getStartCoords().getY()][x] = (int) board[coord.getStartCoords().getY()][x] + 1;
+				}
+			}
+		}else{
+			System.out.println("Unsupported coordinates");
+		}
+	}
+
+	private static void printBoard(){
+		for(int r=0; r<board.length; r++){
+			Object[] row = board[r];
+			System.out.println(Arrays.toString(row));
+		}
 	}
 
 	private static void createBoard(){
-		board = new Object[1000][1000];
+		board = new Object[5][5];
 	}
 
 	private static void crateCoordsFromFile(){
@@ -87,7 +131,7 @@ public class HydrothermalVents {
 	private static List<String> readLines(){
 		List<String> lines = new ArrayList<>();
 		ClassLoader classLoader = HydrothermalVents.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "vents.txt" );
+		InputStream is = classLoader.getResourceAsStream( "ventse.txt" );
 		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
 				BufferedReader reader = new BufferedReader( streamReader )) {
 			String line;
