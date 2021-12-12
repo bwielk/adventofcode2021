@@ -58,8 +58,8 @@ public class HydrothermalVents {
 		createBoard();
 		crateCoordsFromFile();
 		runAllMoves();
-		printBoard();
 		countOverlapsOfAmount(2);
+		printBoard();
 	}
 
 	private static void runAllMoves(){
@@ -71,27 +71,35 @@ public class HydrothermalVents {
 	private static void move(Coords coord){
 		StartCoords startCoords = coord.getStartCoords();
 		EndCoords endCoords = coord.getEndCoords();
+		int startPointY = Math.min( startCoords.getY(), endCoords.getY() );
+		int endPointY = Math.max( startCoords.getY(), endCoords.getY() );
+		int startPointX = Math.min( startCoords.getX(), endCoords.getX() );
+		int endPointX = Math.max( startCoords.getX(), endCoords.getX() );
 		if((startCoords.getX() == endCoords.getX()) && (startCoords.getY() != endCoords.getY())){
-			int startPoint = Math.min( startCoords.getY(), endCoords.getY() );
-			int endPoint = Math.max( startCoords.getY(), endCoords.getY() );
-			for(int y= startPoint; y<=endPoint; y++){
+			for(int y= startPointY; y<=endPointY; y++){
 				Object currentValue = board[y][coord.getStartCoords().getX()];
 				if(currentValue == null){
 					board[y][coord.getStartCoords().getX()] = 1;
 				}else{
-					board[y][coord.getStartCoords().getX()] = (int) board[y][coord.getStartCoords().getX()]+1;
+					board[y][coord.getStartCoords().getX()] = board[y][coord.getStartCoords().getX()]+1;
 				}
 			}
-		}else if((startCoords.getX() != endCoords.getX()) && (startCoords.getY() == endCoords.getY())){
-			int startPoint = Math.min( startCoords.getX(), endCoords.getX() );
-			int endPoint = Math.max( startCoords.getX(), endCoords.getX() );
-			for(int x= startPoint; x<=endPoint; x++){
+		}else if((startCoords.getX() != endCoords.getX()) && (startCoords.getY() == endCoords.getY())) {
+			for ( int x = startPointX; x <= endPointX; x++ ) {
 				Object currentValue = board[coord.getStartCoords().getY()][x];
-				if(currentValue == null){
+				if ( currentValue == null ) {
 					board[coord.getStartCoords().getY()][x] = 1;
-				}else{
-					board[coord.getStartCoords().getY()][x] = (int) board[coord.getStartCoords().getY()][x] + 1;
+				} else {
+					board[coord.getStartCoords().getY()][x] = board[coord.getStartCoords().getY()][x] + 1;
 				}
+			}
+		}else if((Math.max( startPointX, startPointY ) - Math.min( startPointX, startPointY ))
+				== (Math.max(endPointX, endPointY )) - Math.min( endPointX, endPointY )){
+			if((coord.getStartCoords().getX() + coord.getStartCoords().getY()) ==
+					(coord.getEndCoords().getX() + coord.getEndCoords().getY())){
+				System.out.println("DIAGONAL - /");
+			}else{
+				System.out.println("DIAGONAL - \\");
 			}
 		}else{
 			System.out.println("Unsupported coordinates");
@@ -118,7 +126,7 @@ public class HydrothermalVents {
 	}
 
 	private static void createBoard(){
-		board = new int[1000][1000];
+		board = new int[6][6];
 	}
 
 	private static void crateCoordsFromFile(){
@@ -144,7 +152,7 @@ public class HydrothermalVents {
 	private static List<String> readLines(){
 		List<String> lines = new ArrayList<>();
 		ClassLoader classLoader = HydrothermalVents.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "vents.txt" );
+		InputStream is = classLoader.getResourceAsStream( "ventse.txt" );
 		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
 				BufferedReader reader = new BufferedReader( streamReader )) {
 			String line;
