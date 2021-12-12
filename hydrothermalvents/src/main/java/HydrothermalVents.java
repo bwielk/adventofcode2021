@@ -59,7 +59,6 @@ public class HydrothermalVents {
 		crateCoordsFromFile();
 		runAllMoves();
 		countOverlapsOfAmount(2);
-		printBoard();
 	}
 
 	private static void runAllMoves(){
@@ -77,8 +76,8 @@ public class HydrothermalVents {
 		int endPointX = Math.max( startCoords.getX(), endCoords.getX() );
 		if((startCoords.getX() == endCoords.getX()) && (startCoords.getY() != endCoords.getY())){
 			for(int y= startPointY; y<=endPointY; y++){
-				Object currentValue = board[y][coord.getStartCoords().getX()];
-				if(currentValue == null){
+				int currentValue = board[y][coord.getStartCoords().getX()];
+				if(currentValue == 0){
 					board[y][coord.getStartCoords().getX()] = 1;
 				}else{
 					board[y][coord.getStartCoords().getX()] = board[y][coord.getStartCoords().getX()]+1;
@@ -86,8 +85,8 @@ public class HydrothermalVents {
 			}
 		}else if((startCoords.getX() != endCoords.getX()) && (startCoords.getY() == endCoords.getY())) {
 			for ( int x = startPointX; x <= endPointX; x++ ) {
-				Object currentValue = board[coord.getStartCoords().getY()][x];
-				if ( currentValue == null ) {
+				int currentValue = board[coord.getStartCoords().getY()][x];
+				if ( currentValue == 0 ) {
 					board[coord.getStartCoords().getY()][x] = 1;
 				} else {
 					board[coord.getStartCoords().getY()][x] = board[coord.getStartCoords().getY()][x] + 1;
@@ -97,9 +96,33 @@ public class HydrothermalVents {
 				== (Math.max(endPointX, endPointY )) - Math.min( endPointX, endPointY )){
 			if((coord.getStartCoords().getX() + coord.getStartCoords().getY()) ==
 					(coord.getEndCoords().getX() + coord.getEndCoords().getY())){
+				// Calculate a rightward diagonal line - /
 				System.out.println("DIAGONAL - /");
+				//start from the coord the beginning of which is at the uppermost point
+				Coordinable diagonalCoordsStart = coord.getStartCoords().getX() < coord.getEndCoords().getX() ? (coord.getEndCoords()) : coord.getStartCoords();
+				int directionalInterval = Math.abs( coord.getStartCoords().getX() - coord.getEndCoords().getX() );
+				for(int x=0; x<=directionalInterval; x++){
+					int currentValue = board[diagonalCoordsStart.getY()+x][diagonalCoordsStart.getX()-x];
+					if(currentValue == 0){
+						board[diagonalCoordsStart.getY()+x][diagonalCoordsStart.getX()-x] = 1;
+					}else{
+						board[diagonalCoordsStart.getY()+x][diagonalCoordsStart.getX()-x] = board[diagonalCoordsStart.getY()+x][diagonalCoordsStart.getX()-x] + 1;
+					}
+				}
 			}else{
+				// Calculate a leftward diagonal line - /
 				System.out.println("DIAGONAL - \\");
+				//start from the coord the beginning of which is at the uppermost point
+				Coordinable diagonalCoordsStart = coord.getStartCoords().getX() > coord.getEndCoords().getX() ? (coord.getEndCoords()) : coord.getStartCoords();
+				int directionalInterval = Math.abs( coord.getStartCoords().getX() - coord.getEndCoords().getX() );
+				for(int x=0; x<=directionalInterval; x++){
+					int currentValue = board[diagonalCoordsStart.getY()+x][diagonalCoordsStart.getX()+x];
+					if(currentValue == 0){
+						board[diagonalCoordsStart.getY()+x][diagonalCoordsStart.getX()+x] = 1;
+					}else{
+						board[diagonalCoordsStart.getY()+x][diagonalCoordsStart.getX()+x] = board[diagonalCoordsStart.getY()+x][diagonalCoordsStart.getX()+x] + 1;
+					}
+				}
 			}
 		}else{
 			System.out.println("Unsupported coordinates");
@@ -126,7 +149,7 @@ public class HydrothermalVents {
 	}
 
 	private static void createBoard(){
-		board = new int[6][6];
+		board = new int[1000][1000];
 	}
 
 	private static void crateCoordsFromFile(){
@@ -152,7 +175,7 @@ public class HydrothermalVents {
 	private static List<String> readLines(){
 		List<String> lines = new ArrayList<>();
 		ClassLoader classLoader = HydrothermalVents.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "ventse.txt" );
+		InputStream is = classLoader.getResourceAsStream( "vents.txt" );
 		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
 				BufferedReader reader = new BufferedReader( streamReader )) {
 			String line;

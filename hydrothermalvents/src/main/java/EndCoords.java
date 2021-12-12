@@ -1,4 +1,4 @@
-public class EndCoords {
+public class EndCoords implements Coordinable{
 
 	private int x;
 	private int y;
