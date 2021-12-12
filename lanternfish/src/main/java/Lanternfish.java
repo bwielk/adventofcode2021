@@ -16,7 +16,7 @@ public class Lanternfish {
 
 	public static void main( String[] args ) {
 		readInitialState();
-		for(int i=0; i<5; i++){
+		for(int i=0; i<80; i++){
 			List<Integer> currentDayRecord = dayRecords.get( i );
 			ArrayList<Integer> newDayList = new ArrayList<>();
 			for(int x=0; x<currentDayRecord.size(); x++){
@@ -34,7 +34,9 @@ public class Lanternfish {
 			dayRecords.add( newDayList );
 			newFish = new ArrayList<>();
 		}
-		System.out.println(dayRecords);
+		displaySequence();
+		System.out.println("TOTAL FISH AT THE END OF THE PERIOD: " + dayRecords.get( dayRecords.size()-1 ).size());
+		System.out.println("TOTAL SUM: " + dayRecords.get( dayRecords.size()-1 ).stream().reduce( 0, (a,b) -> a + b) );
 	}
 
 	private static void readInitialState(){
@@ -51,5 +53,11 @@ public class Lanternfish {
 			e.printStackTrace();
 		}
 		dayRecords.add( (ArrayList<Integer>) initialState );
+	}
+
+	private static void displaySequence(){
+		for(int i=0; i<dayRecords.size(); i++){
+			System.out.println("\n" + dayRecords.get( i ).toString());
+		}
 	}
 }
