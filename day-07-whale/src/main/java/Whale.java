@@ -96,7 +96,7 @@ public class Whale {
 
 	private static void readInitialState(){
 		ClassLoader classLoader = Whale.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "w.txt" );
+		InputStream is = classLoader.getResourceAsStream( "whale.txt" );
 		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
 				BufferedReader reader = new BufferedReader( streamReader )) {
 			String line;
