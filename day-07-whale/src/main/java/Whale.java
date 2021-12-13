@@ -3,12 +3,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class Whale {
 
@@ -44,20 +42,49 @@ public class Whale {
 	 * This costs a total of 37 fuel. This is the cheapest possible outcome; more expensive outcomes include aligning at position 1 (41 fuel), position 3 (39 fuel), or position 10 (71 fuel).
 	 *
 	 * Determine the horizontal position that the crabs can align to using the least fuel possible. How much fuel must they spend to align to that position?
+	 * Your puzzle answer was 345035.
+	 *
+	 * The first half of this puzzle is complete! It provides one gold star: *
+	 *
+	 * --- Part Two ---
+	 * The crabs don't seem interested in your proposed solution. Perhaps you misunderstand crab engineering?
+	 *
+	 * As it turns out, crab submarine engines don't burn fuel at a constant rate. Instead, each change of 1 step in horizontal position costs 1 more unit of fuel than the last: the first step costs 1, the second step costs 2, the third step costs 3, and so on.
+	 *
+	 * As each crab moves, moving further becomes more expensive. This changes the best horizontal position to align them all on; in the example above, this becomes 5:
+	 *
+	 * Move from 16 to 5: 66 fuel
+	 * Move from 1 to 5: 10 fuel
+	 * Move from 2 to 5: 6 fuel
+	 * Move from 0 to 5: 15 fuel
+	 * Move from 4 to 5: 1 fuel
+	 * Move from 2 to 5: 6 fuel
+	 * Move from 7 to 5: 3 fuel
+	 * Move from 1 to 5: 10 fuel
+	 * Move from 2 to 5: 6 fuel
+	 * Move from 14 to 5: 45 fuel
+	 * This costs a total of 168 fuel. This is the new cheapest possible outcome; the old alignment position (2) now costs 206 fuel instead.
+	 *
+	 * Determine the horizontal position that the crabs can align to using the least fuel possible so they can make you an escape route! How much fuel must they spend to align to that position?
 	 */
 
 	private static int[] initialState;
-	private static HashMap<Integer, Integer> results;
+	private static HashMap<Integer, Integer> resultsConstantRate;
+	private static HashMap<Integer, Integer> resultsIncrementalRate;
+	private static int maxPositionRange = 1000;
 
 	public static void main( String[] args ) {
-		int maxPositionRange = 1000;
-		calculateFuelRating(maxPositionRange);
-		int theLeastFuelUsage = findTheMostEfficientFuelConsumption(maxPositionRange);
-		findThePositionWithTheLowestFuelConsumption(theLeastFuelUsage);
+		calculateFuelRatingConstantRate(maxPositionRange);
+		int theLeastFuelUsageConstantRate = findTheMostEfficientFuelConsumption(maxPositionRange, resultsConstantRate, FuelUsage.CONSTANT);
+		findThePositionWithTheLowestFuelConsumptionConstantRate(theLeastFuelUsageConstantRate, resultsConstantRate, FuelUsage.CONSTANT);
+		calculateFuelRatingIncrementalRate(maxPositionRange);
+		int theLeastFuelUsageIncrementalRate = findTheMostEfficientFuelConsumption(maxPositionRange, resultsIncrementalRate, FuelUsage.INCREMENTAL);
+		findThePositionWithTheLowestFuelConsumptionConstantRate(theLeastFuelUsageIncrementalRate, resultsIncrementalRate, FuelUsage.INCREMENTAL);
+
 	}
 
-	public static int findTheMostEfficientFuelConsumption(int maxPositionRange){
-		Object[] values = results.values().toArray();
+	public static int findTheMostEfficientFuelConsumption(int maxPositionRange, HashMap<Integer, Integer> listToAnalyse, FuelUsage fuelUsage){
+		Object[] values = listToAnalyse.values().toArray();
 		int theLeastFuelUsage = (int) values[0];
 		for(int i=0; i<values.length; i++){
 			int currentValue = (int) values[i];
@@ -65,33 +92,50 @@ public class Whale {
 				theLeastFuelUsage = currentValue;
 			}
 		}
-		System.out.println(String.format("The lowest fuel usage while aligning in line from 0 to %s is: %s ",
-				maxPositionRange, theLeastFuelUsage));
+		System.out.println(String.format("The lowest fuel usage while aligning in line from "
+						+ "0 to %s at the %s rate is: %s ",
+				maxPositionRange, fuelUsage.getType(), theLeastFuelUsage));
 		return theLeastFuelUsage;
 	}
 
-	private static void findThePositionWithTheLowestFuelConsumption(int value){
+	private static void findThePositionWithTheLowestFuelConsumptionConstantRate(int value, HashMap<Integer, Integer> listToAnalyse, FuelUsage fuelUsage){
 		int position = 0;
-		for(Map.Entry<Integer, Integer> e : results.entrySet()){
+		for(Map.Entry<Integer, Integer> e : listToAnalyse.entrySet()){
 			if(e.getValue() == value){
 				position = e.getKey();
 			}
 		}
-		System.out.println(String.format("THE RANGE POSITION WITH THE LOWEST FUEL USAGE OF %s is : %s", value, position));
+		System.out.println(String.format("THE RANGE POSITION WITH THE LOWEST FUEL USAGE OF %s "
+				+ "AT THE %s RATE is : %s", value, fuelUsage.getType(), position));
 	}
 
-	private static void calculateFuelRating(int maxPositionRange){
-		results = new HashMap<>();
+	private static void calculateFuelRatingConstantRate(int maxPositionRange){
+		resultsConstantRate = new HashMap<>();
 		readInitialState();
 		for(int n=1; n<=maxPositionRange; n++){
-			int[] resultStorage = new int[initialState.length];
+			int result = 0;
 			for(int i=0; i<initialState.length; i++){
-				resultStorage[i] = Math.abs( initialState[i]-n );
+				result += Math.abs( initialState[i]-n );
 			}
-			int sum = IntStream.of(resultStorage).sum();
-			results.put( n, sum );
+			resultsConstantRate.put( n, result );
 		}
-		System.out.println(results);
+		System.out.println( "Constant rate:\n" + resultsConstantRate );
+	}
+
+	private static void calculateFuelRatingIncrementalRate(int maxPositionRange){
+		resultsIncrementalRate = new HashMap<>();
+		readInitialState();
+		for(int n=1; n<=maxPositionRange; n++){
+			int totalFuelUsageUntilPositionReached = 0;
+			for(int i=0; i<initialState.length; i++){
+				int numberOfMoves = Math.abs( initialState[i] - n);
+				for(int move=0; move<numberOfMoves; move++){
+					totalFuelUsageUntilPositionReached+= 1+move;
+				}
+			}
+			resultsIncrementalRate.put( n, totalFuelUsageUntilPositionReached );
+		}
+		System.out.println( "Incremental rate:\n" + resultsIncrementalRate );
 	}
 
 	private static void readInitialState(){
