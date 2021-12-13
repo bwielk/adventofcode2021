@@ -16,7 +16,6 @@ public class SonarSweep {
 			int nextNumber = Integer.parseInt(numbers.get( i+1 ));
 			if(nextNumber > currentNumber){
 				decreasedNumbers.add( currentNumber );
-				System.out.println(String.format( "\nPair of numbers %s - %s", numbers.get( i ), numbers.get( i +1 )));
 			}
 		}
 		System.out.println("NUMBER OF DECREASED NUMBERS : " + decreasedNumbers.size());
