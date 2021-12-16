@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.example</groupId>
-	<artifactId>day-08-sevensegmentsearch</artifactId>
+	<artifactId>day-08-segmentsearch</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
 	<properties>
