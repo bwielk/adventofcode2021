@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -32,24 +33,29 @@ public class SmokeBasinSearch {
 			List<Integer> numbers = new ArrayList<>();
 			for(int i=0; i<heightmapMatrix[row].length; i++){
 				int currentNumber = heightmapMatrix[row][i];
+				HashMap<Directions, Integer> surroundings = new HashMap<>();
 				for(Directions d : directions){
 					int newX = i+d.getX();
 					int newY = row+d.getY();
 					if( (newX >= 0 && newX<maximumLengthOfLineInTheFile) &&
 							(newY >= 0 && newY<heightmapMatrix.length) ){
-						numbers.add(heightmapMatrix[newY][newX]);
+						int foundValue = heightmapMatrix[newY][newX];
+						surroundings.put(d, foundValue);
+						numbers.add(foundValue);
 					}
 				}
 				boolean isLowPoint = true;
 				for(Integer number : numbers){
-					if(currentNumber > number){
+					if(currentNumber >= number){
 						isLowPoint = false;
 						break;
 					}
 				}
 				numbers.clear();
 				if(isLowPoint){
-					resultData.add( new Coordinates( i, row, currentNumber ));
+					Coordinates coordinates = new Coordinates( i, row, currentNumber );
+					coordinates.setData( surroundings);
+					resultData.add( coordinates );
 				}
 			}
 		}
