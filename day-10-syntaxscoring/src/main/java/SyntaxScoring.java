@@ -84,6 +84,7 @@ public class SyntaxScoring {
 					}
 				}
 			char[] charsOfCurrentLine = currentLine.toCharArray();
+			System.out.println("\nPROCESSING POST CLEANUP LINE: " + currentLine);
 			for(int i=0; i<charsOfCurrentLine.length-1; i++){
 				char currentChar = charsOfCurrentLine[i];
 				char nextChar = charsOfCurrentLine[i+1];
@@ -123,20 +124,6 @@ public class SyntaxScoring {
 	}
 
 	private static List<String> readInitialState(){
-		List<String> lines = new ArrayList<>();
-		InputStream is = SyntaxScoring.class.getClassLoader().getResourceAsStream( "test.txt" );
-		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
-				BufferedReader reader = new BufferedReader( streamReader )) {
-			String line;
-			while((line = reader.readLine()) != null) {
-				lines.add( line );
-			}
-		} catch ( IOException e ) {
-			e.printStackTrace();
-		}
-
-		return lines;
+		return FileReaderUtil.readFileAsLinesOfStrings( SyntaxScoring.class.getClassLoader(), "input.txt" );
 	}
-
-
 }

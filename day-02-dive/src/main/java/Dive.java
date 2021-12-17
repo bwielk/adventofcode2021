@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -79,19 +80,6 @@ public class Dive {
 	}
 
 	private static List<String> lineReader(){
-		List<String> lines = new ArrayList<>();
-		ClassLoader classLoader = Dive.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "directions.txt" );
-		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
-				BufferedReader reader = new BufferedReader( streamReader )) {
-			String line;
-			while((line = reader.readLine()) != null) {
-				lines.add( line );
-			}
-		} catch ( IOException e ) {
-			e.printStackTrace();
-		}
-		return lines;
+		return FileReaderUtil.readFileAsLinesOfStrings( Dive.class.getClassLoader(), "directions.txt" );
 	}
-
 }

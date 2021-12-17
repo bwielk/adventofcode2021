@@ -224,19 +224,7 @@ public class GiantSquid {
 	}
 
 	private static List<String> lineReader(){
-		List<String> lines = new ArrayList<>();
-		ClassLoader classLoader = GiantSquid.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "bingo.txt" );
-		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
-				BufferedReader reader = new BufferedReader( streamReader )) {
-			String line;
-			while((line = reader.readLine()) != null) {
-				lines.add( line );
-			}
-		} catch ( IOException e ) {
-			e.printStackTrace();
-		}
-		return lines;
+		return FileReaderUtil.readFileAsLinesOfStrings(  GiantSquid.class.getClassLoader(), "bingo.txt" );
 	}
 
 	private static void addCreatedBingoTable(Table table){

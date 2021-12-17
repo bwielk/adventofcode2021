@@ -200,18 +200,6 @@ public class HydrothermalVents {
 
 
 	private static List<String> readLines(){
-		List<String> lines = new ArrayList<>();
-		ClassLoader classLoader = HydrothermalVents.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "vents.txt" );
-		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
-				BufferedReader reader = new BufferedReader( streamReader )) {
-			String line;
-			while((line = reader.readLine()) != null) {
-				lines.add( line );
-			}
-		} catch ( IOException e ) {
-			e.printStackTrace();
-		}
-		return lines;
+		return FileReaderUtil.readFileAsLinesOfStrings( HydrothermalVents.class.getClassLoader(), "vents.txt" );
 	}
 }

@@ -21,19 +21,8 @@ public class SonarSweep {
 		System.out.println("NUMBER OF DECREASED NUMBERS : " + decreasedNumbers.size());
 	}
 
-	private static List<String> lineReader(){
-		List<String> lines = new ArrayList<>();
-		ClassLoader classLoader = SonarSweep.class.getClassLoader();
-		InputStream is = classLoader.getResourceAsStream( "numbers.txt" );
-		try(InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
-				BufferedReader reader = new BufferedReader( streamReader )) {
-			String line;
-			while((line = reader.readLine()) != null) {
-				lines.add( line );
-			}
-		} catch ( IOException e ) {
-			e.printStackTrace();
-		}
-		return lines;
+	private static List<String> lineReader() {
+		return FileReaderUtil.readFileAsLinesOfStrings( SonarSweep.class.getClassLoader(),
+				"numbers.txt" );
 	}
 }
