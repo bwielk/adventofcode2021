@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class SyntaxScoring {
 
@@ -64,44 +64,62 @@ public class SyntaxScoring {
 	 * Find the first illegal character in each corrupted line of the navigation subsystem. What is the total syntax error score for those errors?
 	 */
 
-	private static List<String> brackets = Arrays.asList("[]", "{}", "<>", "()");
+	private static final String[] brackets = new String[] {"[]", "{}", "<>", "()"};
+	private static final Character[] bracketOpenings = new Character[] {'[', '{', '<', '('};
+	private static final HashMap<Character, Integer> foundSyntaxErrors = new HashMap<>();
 
 	public static void main( String[] args ) {
-		processLines();
+		defineFoundFailuresDict();
+		identifySyntaxErrors();
+		calculateSyntaxErrorScore();
 	}
 
-	public static void processLines() {
-		HashMap<Character, Integer> foundFailures = new HashMap<>();
-		foundFailures.put( '}', 0 );
-		foundFailures.put( ')', 0 );
-		foundFailures.put( '>', 0 );
-		foundFailures.put( ']', 0 );
+	public static void identifySyntaxErrors() {
 		List<String> lines = readInitialState();
 		for(String line : lines){
 			String currentLine = line;
-				while ( Arrays.stream( new String[] {"[]", "{}", "<>", "()"} ).anyMatch( currentLine::contains ) ) {
+				while ( Arrays.stream( brackets ).anyMatch( currentLine::contains ) ) {
 					for ( String bracket : brackets ) {
 						currentLine = currentLine.replace( bracket, "" );
-						System.out.println( currentLine );
 					}
 				}
 			char[] charsOfCurrentLine = currentLine.toCharArray();
 			for(int i=0; i<charsOfCurrentLine.length-1; i++){
 				char currentChar = charsOfCurrentLine[i];
 				char nextChar = charsOfCurrentLine[i+1];
-//					if(nextChar matches Any of the opening  - then do nothing )
-				if( Arrays.stream( new Character[] {'[', '{', '<', '('} ).anyMatch( x -> currentChar == x)
-					&& Arrays.stream( new Character[] {'[', '{', '<', '('} ).anyMatch( x -> nextChar == x)){
-					System.out.println("Go next");
+				if( Arrays.stream( bracketOpenings ).anyMatch( x -> currentChar == x)
+					&& Arrays.stream( bracketOpenings ).anyMatch( x -> nextChar == x)){
+					System.out.println(String.format( "Current char - index: %s value :%s\nNext char - value: %s",
+							i, currentChar, nextChar ));
 				}else{
 					if(currentChar != nextChar){
-						foundFailures.put( nextChar, foundFailures.get( nextChar )+1 );
+						foundSyntaxErrors.put( nextChar, foundSyntaxErrors.get( nextChar )+1 );
+						//only search for the first one in line
 						break;
 					}
 				}
 			}
 		}
-		System.out.println(foundFailures);
+	}
+
+	private static int calculateSyntaxErrorScore(){
+		int score = 0;
+		for( Map.Entry<Character, Integer> entry : foundSyntaxErrors.entrySet()){
+			for(Scores scores : Scores.values()){
+				if(entry.getKey().equals(scores.getBracketClosing())){
+					score += entry.getValue()*scores.getScore();
+				}
+			}
+		}
+		System.out.println("CALCULATED ERROR SCORE: " + score);
+		return score;
+	}
+
+	private static void defineFoundFailuresDict(){
+		foundSyntaxErrors.put( '}', 0 );
+		foundSyntaxErrors.put( ')', 0 );
+		foundSyntaxErrors.put( '>', 0 );
+		foundSyntaxErrors.put( ']', 0 );
 	}
 
 	private static List<String> readInitialState(){

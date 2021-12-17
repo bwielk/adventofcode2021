@@ -1,14 +1,14 @@
 public enum Scores {
 
-	CLOSING_BRACKET(")", 3),
-	CLOSING_SQUARE_BRACKET("]", 57),
-	CLOSING_ROUND_BRACKETS("}", 1197),
-	CLOSING_CHEVRON(">", 25137);
+	CLOSING_BRACKET(')', 3),
+	CLOSING_SQUARE_BRACKET(']', 57),
+	CLOSING_ROUND_BRACKETS('}', 1197),
+	CLOSING_CHEVRON('>', 25137);
 
-	private String bracketClosing;
+	private Character bracketClosing;
 	private Integer score;
 
-	Scores(String bracketClosing, Integer score){
+	Scores(Character bracketClosing, Integer score){
 		this.bracketClosing = bracketClosing;
 		this.score = score;
 	}
@@ -17,7 +17,7 @@ public enum Scores {
 		return score;
 	}
 
-	public String getBracketClosing() {
+	public Character getBracketClosing() {
 		return bracketClosing;
 	}
 }
