@@ -1,3 +1,14 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class SyntaxScoring {
 
 	/***
@@ -52,4 +63,62 @@ public class SyntaxScoring {
 	 *
 	 * Find the first illegal character in each corrupted line of the navigation subsystem. What is the total syntax error score for those errors?
 	 */
+
+	private static List<String> brackets = Arrays.asList("[]", "{}", "<>", "()");
+
+	public static void main( String[] args ) {
+		processLines();
+	}
+
+	public static void processLines() {
+		HashMap<Character, Integer> foundFailures = new HashMap<>();
+		foundFailures.put( '}', 0 );
+		foundFailures.put( ')', 0 );
+		foundFailures.put( '>', 0 );
+		foundFailures.put( ']', 0 );
+		List<String> lines = readInitialState();
+		for(String line : lines){
+			String currentLine = line;
+				while ( Arrays.stream( new String[] {"[]", "{}", "<>", "()"} ).anyMatch( currentLine::contains ) ) {
+					for ( String bracket : brackets ) {
+						currentLine = currentLine.replace( bracket, "" );
+						System.out.println( currentLine );
+					}
+				}
+			char[] charsOfCurrentLine = currentLine.toCharArray();
+			for(int i=0; i<charsOfCurrentLine.length-1; i++){
+				char currentChar = charsOfCurrentLine[i];
+				char nextChar = charsOfCurrentLine[i+1];
+//					if(nextChar matches Any of the opening  - then do nothing )
+				if( Arrays.stream( new Character[] {'[', '{', '<', '('} ).anyMatch( x -> currentChar == x)
+					&& Arrays.stream( new Character[] {'[', '{', '<', '('} ).anyMatch( x -> nextChar == x)){
+					System.out.println("Go next");
+				}else{
+					if(currentChar != nextChar){
+						foundFailures.put( nextChar, foundFailures.get( nextChar )+1 );
+						break;
+					}
+				}
+			}
+		}
+		System.out.println(foundFailures);
+	}
+
+	private static List<String> readInitialState(){
+		List<String> lines = new ArrayList<>();
+		InputStream is = SyntaxScoring.class.getClassLoader().getResourceAsStream( "test.txt" );
+		try( InputStreamReader streamReader = new InputStreamReader( is, StandardCharsets.UTF_8 );
+				BufferedReader reader = new BufferedReader( streamReader )) {
+			String line;
+			while((line = reader.readLine()) != null) {
+				lines.add( line );
+			}
+		} catch ( IOException e ) {
+			e.printStackTrace();
+		}
+
+		return lines;
+	}
+
+
 }
