@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class FileReaderUtil {
 
@@ -22,5 +23,12 @@ public class FileReaderUtil {
 			e.printStackTrace();
 		}
 		return lines;
+	}
+
+	public static int[] convertStringOfDigitsToIntArr(String arrayOfDigits){
+		int[] convertedArray = Stream.of(arrayOfDigits.split(""))
+				.mapToInt(Integer::parseInt)
+				.toArray();
+		return convertedArray;
 	}
 }

@@ -160,13 +160,13 @@ public class SegmentSearch {
 
 	public static void main( String[] args ) {
 		parsedInput = parseInputLines();
-		calculateFrequencyOfNumbersInDisplay( SegmentDisplaysNumbers.ONE, SegmentDisplaysNumbers.FOUR,
+		calculateOccurrenceOfNumbersInDisplay( SegmentDisplaysNumbers.ONE, SegmentDisplaysNumbers.FOUR,
 				SegmentDisplaysNumbers.SEVEN, SegmentDisplaysNumbers.EIGHT );
-		calculateTotalFrequencyOfNumbers( SegmentDisplaysNumbers.ONE, SegmentDisplaysNumbers.FOUR,
+		calculateTotalOccurrenceOfNumbers( SegmentDisplaysNumbers.ONE, SegmentDisplaysNumbers.FOUR,
 				SegmentDisplaysNumbers.SEVEN, SegmentDisplaysNumbers.EIGHT );
 	}
 
-	private static int calculateTotalFrequencyOfNumbers(SegmentDisplaysNumbers... segmentDisplaysNumbers){
+	private static int calculateTotalOccurrenceOfNumbers(SegmentDisplaysNumbers... segmentDisplaysNumbers){
 		int totalResult = 0;
 		for(SegmentDisplaysNumbers sdn : segmentDisplaysNumbers){
 			totalResult+= frequency.get( sdn );
@@ -176,7 +176,7 @@ public class SegmentSearch {
 		return totalResult;
 	}
 
-	private static HashMap<SegmentDisplaysNumbers, Integer> calculateFrequencyOfNumbersInDisplay(SegmentDisplaysNumbers... segmentDisplaysNumbers){
+	private static HashMap<SegmentDisplaysNumbers, Integer> calculateOccurrenceOfNumbersInDisplay(SegmentDisplaysNumbers... segmentDisplaysNumbers){
 		for(InputLines il : parsedInput){
 			String[] outputValues = il.getOutputValues();
 			for(SegmentDisplaysNumbers sdn : segmentDisplaysNumbers){
