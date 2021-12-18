@@ -1,3 +1,8 @@
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class SegmentSearch {
 
 	/***
@@ -29,16 +34,6 @@ public class SegmentSearch {
 	 * .    f  e    f  .    f  e    f  .    f
 	 *  gggg    gggg    ....    gggg    gggg
 	 *
-	 *  0 -> 6
-	 *  1 -> 2 u
-	 *  2 -> 5
-	 *  3 -> 5
-	 *  4 -> 4 u
-	 *  5 -> 5
-	 *  6 -> 6
-	 *  7 -> 3 u
-	 *  8 -> 7 u
-	 *  9 -> 6
 	 *
 	 * So, to render a 1, only segments c and f would be turned on; the rest would be off. To render a 7, only segments a, c, and f would be turned on.
 	 *
@@ -104,7 +99,114 @@ public class SegmentSearch {
 	 * there are 26 instances of digits that use a unique number of segments (highlighted above).
 	 *
 	 * In the output values, how many times do digits 1, 4, 7, or 8 appear?
+	 *
+	 * Your puzzle answer was 514.
+	 *
+	 * The first half of this puzzle is complete! It provides one gold star: *
+	 *
+	 * --- Part Two ---
+	 * Through a little deduction, you should now be able to determine the remaining digits. Consider again the first example above:
+	 *
+	 * acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab |
+	 * cdfeb fcadb cdfeb cdbaf
+	 * After some careful analysis, the mapping between signal wires and segments only make sense in the following configuration:
+	 *
+	 *  dddd
+	 * e    a
+	 * e    a
+	 *  ffff
+	 * g    b
+	 * g    b
+	 *  cccc
+	 * So, the unique signal patterns would correspond to the following digits:
+	 *
+	 * acedgfb: 8
+	 * cdfbe: 5
+	 * gcdfa: 2
+	 * fbcad: 3
+	 * dab: 7
+	 * cefabd: 9
+	 * cdfgeb: 6
+	 * eafb: 4
+	 * cagedb: 0
+	 * ab: 1
+	 * Then, the four digits of the output value can be decoded:
+	 *
+	 * cdfeb: 5
+	 * fcadb: 3
+	 * cdfeb: 5
+	 * cdbaf: 3
+	 * Therefore, the output value for this entry is 5353.
+	 *
+	 * Following this same process for each entry in the second, larger example above, the output value of each entry can be determined:
+	 *
+	 * fdgacbe cefdb cefbgd gcbe: 8394
+	 * fcgedb cgb dgebacf gc: 9781
+	 * cg cg fdcagb cbg: 1197
+	 * efabcd cedba gadfec cb: 9361
+	 * gecf egdcabf bgf bfgea: 4873
+	 * gebdcfa ecba ca fadegcb: 8418
+	 * cefg dcbef fcge gbcadfe: 4548
+	 * ed bcgafe cdgba cbgef: 1625
+	 * gbdfcae bgc cg cgb: 8717
+	 * fgae cfgab fg bagce: 4315
+	 * Adding all of the output values in this larger example produces 61229.
+	 *
+	 * For each entry, determine all of the wire/segment connections and decode the four-digit output values. What do you get if you add up all of the output values?
 	 */
 
+	private static List<InputLines> parsedInput;
+	private static final HashMap<SegmentDisplaysNumbers, Integer> frequency = new HashMap<>();
 
+	public static void main( String[] args ) {
+		parsedInput = parseInputLines();
+		calculateFrequencyOfNumbersInDisplay( SegmentDisplaysNumbers.ONE, SegmentDisplaysNumbers.FOUR,
+				SegmentDisplaysNumbers.SEVEN, SegmentDisplaysNumbers.EIGHT );
+		calculateTotalFrequencyOfNumbers( SegmentDisplaysNumbers.ONE, SegmentDisplaysNumbers.FOUR,
+				SegmentDisplaysNumbers.SEVEN, SegmentDisplaysNumbers.EIGHT );
+	}
+
+	private static int calculateTotalFrequencyOfNumbers(SegmentDisplaysNumbers... segmentDisplaysNumbers){
+		int totalResult = 0;
+		for(SegmentDisplaysNumbers sdn : segmentDisplaysNumbers){
+			totalResult+= frequency.get( sdn );
+		}
+		System.out.println("TOTAL OCCURENCE OF NUMBERS " + Arrays.toString(
+				Arrays.stream( segmentDisplaysNumbers ).toArray() ) + " IS :" + totalResult);
+		return totalResult;
+	}
+
+	private static HashMap<SegmentDisplaysNumbers, Integer> calculateFrequencyOfNumbersInDisplay(SegmentDisplaysNumbers... segmentDisplaysNumbers){
+		for(InputLines il : parsedInput){
+			String[] outputValues = il.getOutputValues();
+			for(SegmentDisplaysNumbers sdn : segmentDisplaysNumbers){
+				for(String output : outputValues){
+					if(output.length() == sdn.getOccupiedSegments()){
+						if(frequency.containsKey( sdn )){
+							frequency.put( sdn, frequency.get( sdn ) +1);
+						}else{
+							frequency.put( sdn, 1 );
+						}
+					}
+				}
+			}
+		}
+		return frequency;
+	}
+
+	private static List<InputLines> parseInputLines(){
+		List<String> initialState = readInitialState();
+		List<InputLines> parsedLines = initialState.stream().map( x ->  {
+			String[] splitString = x.split( "\\|" );
+			String[] encodedTenDigits = splitString[0].trim().split( " " );
+			String[] output = splitString[1].trim().split( " " );
+			InputLines il = new InputLines( encodedTenDigits, output);
+			return il;
+		} ).collect( Collectors.toList() );
+		return parsedLines;
+	}
+
+	private static List<String> readInitialState(){
+		return FileReaderUtil.readFileAsLinesOfStrings( SegmentSearch.class.getClassLoader(),"input.txt");
+	}
 }
