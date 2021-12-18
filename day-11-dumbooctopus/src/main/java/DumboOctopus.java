@@ -312,7 +312,9 @@ public class DumboOctopus {
 
 	private static void processOneStep(){
 		updateValuesUponAStep();
+		System.out.println( Arrays.deepToString( octopusMatrix ) );
 		updateValuesUponFlashes();
+		System.out.println( Arrays.deepToString( octopusMatrix ) );
 
 	}
 
@@ -322,7 +324,12 @@ public class DumboOctopus {
 			for(int x=0; x<currentLine.length; x++){
 				if(currentLine[x] == 0){
 					for(Directions d : Directions.values()){
-						octopusMatrix[y+d.getY()][x+d.getX()] = octopusMatrix[y+d.getY()][x+d.getX()]+1;
+						if(octopusMatrix[y+d.getY()][x+d.getX()] > 0){
+							octopusMatrix[y+d.getY()][x+d.getX()] = octopusMatrix[y+d.getY()][x+d.getX()]+1;
+							if(octopusMatrix[y+d.getY()][x+d.getX()] == 9){
+								octopusMatrix[y+d.getY()][x+d.getX()] = 0;
+							}
+						}
 					}
 				}
 			}
