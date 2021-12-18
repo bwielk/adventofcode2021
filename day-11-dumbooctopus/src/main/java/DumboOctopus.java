@@ -306,7 +306,41 @@ public class DumboOctopus {
 
 	public static void main( String[] args ) {
 		generateOctopusMatrix();
-		System.out.println(octopusMatrix.toString());
+		processOneStep();
+		System.out.println( Arrays.deepToString( octopusMatrix ) );
+	}
+
+	private static void processOneStep(){
+		updateValuesUponAStep();
+		updateValuesUponFlashes();
+
+	}
+
+	private static void updateValuesUponFlashes(){
+		for(int y=0; y<octopusMatrix.length; y++){
+			int[] currentLine = octopusMatrix[y];
+			for(int x=0; x<currentLine.length; x++){
+				if(currentLine[x] == 0){
+					for(Directions d : Directions.values()){
+						octopusMatrix[y+d.getY()][x+d.getX()] = octopusMatrix[y+d.getY()][x+d.getX()]+1;
+					}
+				}
+			}
+		}
+	}
+
+
+	private static void updateValuesUponAStep(){
+		for(int y=0; y<octopusMatrix.length; y++){
+			int[] currentLine = octopusMatrix[y];
+			for(int x=0; x<currentLine.length; x++){
+				if(currentLine[x]+1 <= 9){
+					currentLine[x] = currentLine[x]+1;
+				}else{
+					currentLine[x] = 0;
+				}
+			}
+		}
 	}
 
 	private static void generateOctopusMatrix(){
@@ -320,7 +354,7 @@ public class DumboOctopus {
 	}
 
 	public static List<String> readInitialState(){
-		return FileReaderUtil.readFileAsLinesOfStrings( DumboOctopus.class.getClassLoader(), "input.txt" );
+		return FileReaderUtil.readFileAsLinesOfStrings( DumboOctopus.class.getClassLoader(), "test-input.txt" );
 	}
 
 }
