@@ -1,8 +1,5 @@
-import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DumboOctopus {
 
@@ -302,32 +299,46 @@ public class DumboOctopus {
 	 * Given the starting energy levels of the dumbo octopuses in your cavern, simulate 100 steps. How many total flashes are there after 100 steps?
 	 */
 
-	private static int[][] octopusMatrix;
+	private static Octopus[][] octopusMatrix;
+	private static int matrixWidthIndex = 0;
+	private static int matrixHeightIndex = 0;
+	private static int numberOfFlashes = 0;
 
 	public static void main( String[] args ) {
 		generateOctopusMatrix();
-		processOneStep();
-		System.out.println( Arrays.deepToString( octopusMatrix ) );
+		processSteps(2);
 	}
 
-	private static void processOneStep(){
-		updateValuesUponAStep();
-		System.out.println( Arrays.deepToString( octopusMatrix ) );
-		updateValuesUponFlashes();
-		System.out.println( Arrays.deepToString( octopusMatrix ) );
-
+	private static void processSteps(int numberOfSteps){
+		for(int i=0; i<numberOfSteps; i++){
+			updateValuesUponAStep();
+			System.out.println("UPDATED VALUES :" + (i+1));
+			displayTheMatrix();
+			updateValuesUponFlashes();
+			System.out.println("UPDATED FLASHES :" + (i+1));
+			displayTheMatrix();
+			System.out.println( "TOTAL NUMBER OF FLASHES AFTER THE STEP: " + numberOfFlashes );
+		}
 	}
 
 	private static void updateValuesUponFlashes(){
+		System.out.println("HEllo");
 		for(int y=0; y<octopusMatrix.length; y++){
-			int[] currentLine = octopusMatrix[y];
+			Octopus[] currentLine = octopusMatrix[y];
 			for(int x=0; x<currentLine.length; x++){
-				if(currentLine[x] == 0){
+				if(currentLine[x].getValue() == 0){
 					for(Directions d : Directions.values()){
-						if(octopusMatrix[y+d.getY()][x+d.getX()] > 0){
-							octopusMatrix[y+d.getY()][x+d.getX()] = octopusMatrix[y+d.getY()][x+d.getX()]+1;
-							if(octopusMatrix[y+d.getY()][x+d.getX()] == 9){
-								octopusMatrix[y+d.getY()][x+d.getX()] = 0;
+						//check that an octopus (cell) is within the array range
+						if( (y+d.getY() >= 0 && y+d.getY()<matrixHeightIndex) &&
+								(x+d.getX() >= 0 && x+d.getX()<matrixWidthIndex) ){
+							//calculate the flashing value
+							if(octopusMatrix[y+d.getY()][x+d.getX()].getValue() > 0){
+								octopusMatrix[y+d.getY()][x+d.getX()].setValue(octopusMatrix[y+d.getY()][x+d.getX()].getValue()+1);
+								//FLASH!
+								if(octopusMatrix[y+d.getY()][x+d.getX()].getValue() > 9){
+									octopusMatrix[y+d.getY()][x+d.getX()].setValue(0);
+									numberOfFlashes++;
+								}
 							}
 						}
 					}
@@ -338,13 +349,15 @@ public class DumboOctopus {
 
 
 	private static void updateValuesUponAStep(){
+		System.out.println("HEllo");
 		for(int y=0; y<octopusMatrix.length; y++){
-			int[] currentLine = octopusMatrix[y];
+			Octopus[] currentLine = octopusMatrix[y];
 			for(int x=0; x<currentLine.length; x++){
-				if(currentLine[x]+1 <= 9){
-					currentLine[x] = currentLine[x]+1;
+				Octopus currentOctopus = currentLine[x];
+				if(currentOctopus.getValue()+1 <= 9){
+					currentOctopus.setValue( currentOctopus.getValue()+1 );
 				}else{
-					currentLine[x] = 0;
+					currentOctopus.setValue(0);
 				}
 			}
 		}
@@ -352,16 +365,27 @@ public class DumboOctopus {
 
 	private static void generateOctopusMatrix(){
 		List<String> initialState = readInitialState();
-		octopusMatrix = new int[initialState.size()][initialState.get( 0 ).length()];
-		for(int i=0; i<initialState.size(); i++){
+		matrixHeightIndex = initialState.size();
+		matrixWidthIndex = initialState.get( 0 ).length();
+		octopusMatrix = new Octopus[matrixHeightIndex][matrixWidthIndex];
+		for(int i=0; i<matrixHeightIndex; i++){
 			String currentLine = initialState.get( i );
 			int[] stringArrConvertedToInArr = FileReaderUtil.convertStringOfDigitsToIntArr(currentLine);
-			octopusMatrix[i] = stringArrConvertedToInArr;
+			Octopus[] newOctopusRow = new Octopus[matrixWidthIndex];
+			for(int v=0; v<stringArrConvertedToInArr.length; v++){
+				newOctopusRow[v] = new Octopus(stringArrConvertedToInArr[v], v, i);
+			}
+			octopusMatrix[i] = newOctopusRow;
 		}
 	}
 
-	public static List<String> readInitialState(){
-		return FileReaderUtil.readFileAsLinesOfStrings( DumboOctopus.class.getClassLoader(), "test-input.txt" );
+	private static List<String> readInitialState(){
+		return FileReaderUtil.readFileAsLinesOfStrings( DumboOctopus.class.getClassLoader(), "test-input2.txt" );
 	}
 
+	private static void displayTheMatrix(){
+		for(int i=0; i<octopusMatrix.length; i++){
+			System.out.println( Arrays.toString( octopusMatrix[i] ) );
+		}
+	}
 }
